@@ -1,3 +1,5 @@
-Django==3.1.*
+Django==5.2.1*
 environs[django]==9.3.0
-Pillow==8.0.*  # required by Windows environment
+Pillow==11.2.1*  # required by Windows environment
+django-debug-toolbar==5.2.0
+marshmallow==3.13.0
