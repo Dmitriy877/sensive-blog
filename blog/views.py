@@ -19,7 +19,7 @@ def serialize_post_optimized(post):
         'title': post.title,
         'teaser_text': post.text[:200],
         'author': post.author.username,
-        'comments_amount': post.comments.count(),
+        'comments_amount': post.post.comments_count,
         'image_url': post.image.url if post.image else None,
         'published_at': post.published_at,
         'slug': post.slug,
@@ -62,8 +62,10 @@ def index(request):
     most_fresh_posts = list(fresh_posts)[-5:]
 
     most_popular_tags = ( 
-        Tag.objects.popular()[:5]
+        Tag.objects.popular_tags()[:5]
     )
+
+    print(most_popular_tags)
 
     context = {
         'most_popular_posts': [
