@@ -7,8 +7,40 @@ from django.db.models import Count
 class PostQuerySet(models.QuerySet):
 
     def year(self, year):
-        posts_at_year = self.filter(published_at__year=year).order_by('published_at')
+        posts_at_year = (
+            self.filter(published_at__year=year).order_by('published_at')
+        )
         return posts_at_year
+
+    def popular(self):
+        popular_posts = (
+            self.annotate(likes_count=Count('likes', distinct=True))
+            .order_by('-likes_count')
+        )
+        return popular_posts
+
+    def fetch_with_comments_count(self):
+        '''
+        Временно добавляет для модели новое поле на уровне Python,
+        увеличивая скорость работы в отличии от использования 2 annotate
+        в 1 запросе
+        '''
+        most_popular_posts_ids = [post.id for post in self]
+        posts_with_comments = (
+            Post.objects.filter(id__in=most_popular_posts_ids)
+            .annotate(comments_count=Count('comments'))
+        )
+
+        ids_and_comments = (
+            posts_with_comments.values_list('id', 'comments_count')
+        )
+
+        count_for_id = dict(ids_and_comments)
+
+        for post in self:
+            post.comments_count = count_for_id[post.id]
+
+        return [post for post in self]
 
 
 class TagQuerySet(models.QuerySet):
