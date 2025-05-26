@@ -49,6 +49,13 @@ def serialize_tag(tag):
     }
 
 
+def serialize_tag_test(tag):
+    return {
+        'title': tag.title,
+        'posts_with_tag': tag.posts_count,
+    }
+
+
 def index(request):
 
     most_popular_posts = (
@@ -64,7 +71,8 @@ def index(request):
     )
 
     most_popular_tags = (
-        Tag.objects.popular_tags()[:5]
+        Tag.objects.annotate(posts_count=Count('posts'))
+        .popular_tags()[:5]
     )
 
     context = {
@@ -74,7 +82,7 @@ def index(request):
         'page_posts': [
             serialize_post_optimized(post) for post in most_fresh_posts
         ],
-        'popular_tags': [serialize_tag(tag) for tag in most_popular_tags],
+        'popular_tags': [serialize_tag_test(tag) for tag in most_popular_tags],
     }
     return render(request, 'index.html', context)
 
