@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from blog.models import Comment, Post, Tag
+from blog.models import Post, Tag
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 

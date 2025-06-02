@@ -46,7 +46,6 @@ class PostQuerySet(models.QuerySet):
     def fetch_with_posts_count(self):
         popular_tags = (
             self.prefetch_related(
-                'author',
                 Prefetch(
                     'tags',
                     queryset=Tag.objects.annotate(
@@ -54,6 +53,7 @@ class PostQuerySet(models.QuerySet):
                     ).all()
                 )
             )
+            .select_related('author')
         )
         return popular_tags
 
