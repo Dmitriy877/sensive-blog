@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from blog.models import Comment, Post, Tag
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 
 
 def filter_posts_by_year(posts_query, year):
@@ -67,10 +68,12 @@ def index(request):
 
 def post_detail(request, slug):
     post = (
-        Post.objects
-        .fetch_with_posts_count()
-        .annotate(likes_count=Count('likes'))
-        .get(slug=slug)
+        get_object_or_404(
+            Post.objects
+            .fetch_with_posts_count()
+            .annotate(likes_count=Count('likes')),
+            slug=slug
+        )
     )
 
     comments = (
@@ -139,7 +142,8 @@ def tag_filter(request, tag_title):
     )
 
     tag = (
-        Tag.objects.get(title=tag_title))
+        get_object_or_404(Tag, title=tag_title)
+    )
 
     related_posts = (
         tag.posts.all()[:20]
