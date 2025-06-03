@@ -4,13 +4,6 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
 
-def filter_posts_by_year(posts_query, year):
-    posts_at_year = (
-        posts_query.filter(published_at__year=year).order_by('published_at')
-    )
-    return posts_at_year
-
-
 def serialize_post_optimized(post):
     return {
         'title': post.title,
